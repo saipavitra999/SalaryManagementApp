@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Table } from "rsuite";
 import * as MdIcons from "react-icons/md";
 import { Row, Col } from "react-bootstrap";
+import EmployeeModal from "./EmployeeModal";
 
 const { Column, HeaderCell, Cell, Pagination } = Table;
 
@@ -38,16 +39,47 @@ function EmployeeDashboard({ ...props }) {
   const [showModal, setShowModal] = useState(false);
   const [values, setValues] = useState({
     employeeName: null,
+    employeeId: null,
+    employeeLogin: null,
+    employeeSalary: null,
+    modalType: null,
   });
 
   function modalpopup(data, modalType) {
     setShowModal(true);
     if (modalType == "EditEmployee") {
-      console.log("test");
+      setValues(() => ({
+        ...values,
+        employeeId: data.id,
+        employeeName: data.fullname,
+        employeeLogin: data.username,
+        employeeSalary: data.salary,
+        modalType: "EditEmployee",
+      }));
     }
     if (modalType == "DeleteEmployee") {
-      console.log("test");
+      setValues(() => ({
+        ...values,
+        employeeId: data.id,
+        modalType: "DeleteEmployee",
+      }));
     }
+  }
+
+  const onChangeInput = (e) => {
+    console.log("test 123");
+    setValues({
+      ...values,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  function handleSubmitEdit() {
+    console.log("Edit User");
+  }
+
+  function handleSubmitDelete() {
+    console.log("Delete User");
   }
 
   return (
@@ -95,6 +127,15 @@ function EmployeeDashboard({ ...props }) {
           </Cell>
         </Column>
       </Table>
+
+      <EmployeeModal
+        show={showModal}
+        onHide={() => setShowModal(!showModal)}
+        values={values}
+        onChangeInput={onChangeInput}
+        handleSubmitEdit={handleSubmitEdit}
+        handleSubmitDelete={handleSubmitDelete}
+      />
     </div>
   );
 }
