@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Pagination } from 'rsuite';
+import { Table, Pagination } from "rsuite";
 import * as MdIcons from "react-icons/md";
 import { Row, Col } from "react-bootstrap";
 import EmployeeModal from "./EmployeeModal";
@@ -120,10 +120,11 @@ function EmployeeDashboard({ ...props }) {
     employeeLogin: null,
     employeeSalary: null,
     modalType: null,
+    filterSalaryMin: null,
+    filterSalaryMax: null,
   });
 
-
-  const handleChangeLimit = dataKey => {
+  const handleChangeLimit = (dataKey) => {
     setPage(1);
     setLimit(dataKey);
   };
@@ -200,10 +201,38 @@ function EmployeeDashboard({ ...props }) {
     console.log("Delete User");
   }
 
+  function handleSubmitFilter() {
+    const result = dummyEmployees.filter(checkSalary);
+    function checkSalary(employee) {
+      return (
+        employee.salary >= values.filterSalaryMin &&
+        employee.salary <= values.filterSalaryMax
+      );
+    }
+    setEmployeeList(result);
+  }
+
   return (
     <div>
       <h3>Employee Salary Management Dashboard</h3>
       <h5>Employee List</h5>
+      Enter Mininum Salary :
+      <input
+        id="filterSalaryMin"
+        type="text"
+        name="filterSalaryMin"
+        value={values.filterSalaryMin}
+        onChange={(e) => onChangeInput(e)}
+      />
+      Enter Maximum Salary :
+      <input
+        id="filterSalaryMax"
+        type="text"
+        name="filterSalaryMax"
+        value={values.filterSalaryMax}
+        onChange={(e) => onChangeInput(e)}
+      />
+      <button onClick={handleSubmitFilter}>Filter</button>
       <Table
         autoHeight
         headerHeight={50}
@@ -253,7 +282,6 @@ function EmployeeDashboard({ ...props }) {
           </Cell>
         </Column>
       </Table>
-
       <div style={{ padding: 20 }}>
         <Pagination
           prev
@@ -264,7 +292,7 @@ function EmployeeDashboard({ ...props }) {
           boundaryLinks
           maxButtons={5}
           size="xs"
-          layout={['total', '-', 'limit', '|', 'pager', 'skip']}
+          layout={["total", "-", "limit", "|", "pager", "skip"]}
           total={employeeList.length}
           limitOptions={[5, 10, 15]}
           limit={limit}
@@ -273,7 +301,6 @@ function EmployeeDashboard({ ...props }) {
           onChangeLimit={handleChangeLimit}
         />
       </div>
-
       <EmployeeModal
         show={showModal}
         onHide={() => setShowModal(!showModal)}
