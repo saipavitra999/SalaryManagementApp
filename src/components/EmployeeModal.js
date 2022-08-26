@@ -13,6 +13,7 @@ function EmployeeModal({
   handleOnSubmit,
   headerKeys,
   array,
+  error,
 }) {
   return (
     <>
@@ -70,12 +71,11 @@ function EmployeeModal({
           )}
           {values.modalType == "UploadData" && (
             <div style={{ textAlign: "center" }}>
-              <h1>REACTJS CSV IMPORT EXAMPLE </h1>
+              <h3>Upload Employee Data</h3>
               <form>
                 <input
                   type={"file"}
                   id={"csvFileInput"}
-                  accept={".csv"}
                   onChange={handleOnChange}
                 />
 
@@ -90,25 +90,29 @@ function EmployeeModal({
 
               <br />
 
-              <table>
-                <thead>
-                  <tr key={"header"}>
-                    {headerKeys.map((key) => (
-                      <th>{key}</th>
-                    ))}
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {array.map((item) => (
-                    <tr key={item.id}>
-                      {Object.values(item).map((val) => (
-                        <td>{val}</td>
+              {error ? (
+                error
+              ) : (
+                <table>
+                  <thead>
+                    <tr key={"header"}>
+                      {headerKeys.map((key) => (
+                        <th>{key}</th>
                       ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+
+                  <tbody>
+                    {array.map((item) => (
+                      <tr key={item.id}>
+                        {Object.values(item).map((val) => (
+                          <td>{val}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           )}
         </Modal.Body>

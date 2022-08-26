@@ -114,8 +114,9 @@ function EmployeeDashboard({ ...props }) {
   const [loading, setLoading] = React.useState(false);
   const [limit, setLimit] = React.useState(10);
   const [page, setPage] = React.useState(1);
-  const [file, setFile] = useState();
+  const [file, setFile] = useState(null);
   const [array, setArray] = useState([]);
+  const [error, setError] = useState("");
   const [values, setValues] = useState({
     employeeName: null,
     employeeId: null,
@@ -187,6 +188,8 @@ function EmployeeDashboard({ ...props }) {
       }));
     }
     if (modalType == "UploadData") {
+      setFile(null);
+      setArray([]);
       setValues(() => ({
         ...values,
         modalType: "UploadData",
@@ -210,21 +213,40 @@ function EmployeeDashboard({ ...props }) {
   }
 
   function handleSubmitFilter() {
-    const result = dummyEmployees.filter(checkSalary);
-    function checkSalary(employee) {
-      return (
-        employee.salary >= values.filterSalaryMin &&
-        employee.salary <= values.filterSalaryMax
-      );
+    if (values.filterSalaryMin && values.filterSalaryMax) {
+      const result = dummyEmployees.filter(checkSalary);
+      function checkSalary(employee) {
+        return (
+          employee.salary >= values.filterSalaryMin &&
+          employee.salary <= values.filterSalaryMax
+        );
+      }
+      setEmployeeList(result);
+    } else {
+      setEmployeeList(dummyEmployees);
     }
-    setEmployeeList(result);
+    setValues({
+      ...values,
+      filterSalaryMin: null,
+      filterSalaryMax: null,
+    });
   }
 
   //csv upload
   const fileReader = new FileReader();
 
   const handleOnChange = (e) => {
-    setFile(e.target.files[0]);
+    setError("");
+    const allowedExtensions = ["csv"];
+    if (e.target.files.length) {
+      const inputFile = e.target.files[0];
+      const fileExtension = inputFile?.type.split("/")[1];
+      if (!allowedExtensions.includes(fileExtension)) {
+        setError("Please input a csv file");
+        return;
+      }
+      setFile(e.target.files[0]);
+    }
   };
 
   const csvFileToArray = (string) => {
@@ -357,7 +379,7 @@ function EmployeeDashboard({ ...props }) {
         handleOnSubmit={handleOnSubmit}
         headerKeys={headerKeys}
         array={array}
-
+        error={error}
       />
     </div>
   );
