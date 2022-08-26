@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "rsuite";
+import { Table, Pagination } from 'rsuite';
 import * as MdIcons from "react-icons/md";
 import { Row, Col } from "react-bootstrap";
 import EmployeeModal from "./EmployeeModal";
 
-const { Column, HeaderCell, Cell, Pagination } = Table;
+const { Column, HeaderCell, Cell } = Table;
 
 //assume dummy data in db
 let dummyEmployees = [
@@ -122,9 +122,21 @@ function EmployeeDashboard({ ...props }) {
     modalType: null,
   });
 
+
+  const handleChangeLimit = dataKey => {
+    setPage(1);
+    setLimit(dataKey);
+  };
+
+  const data = employeeList.filter((v, i) => {
+    const start = limit * (page - 1);
+    const end = start + limit;
+    return i >= start && i < end;
+  });
+
   const getData = () => {
     if (sortColumn && sortType) {
-      return employeeList.sort((a, b) => {
+      return data.sort((a, b) => {
         let x = a[sortColumn];
         let y = b[sortColumn];
         if (typeof x === "string") {
@@ -140,7 +152,7 @@ function EmployeeDashboard({ ...props }) {
         }
       });
     }
-    return employeeList;
+    return data;
   };
 
   const handleSortColumn = (sortColumn, sortType) => {
@@ -241,6 +253,26 @@ function EmployeeDashboard({ ...props }) {
           </Cell>
         </Column>
       </Table>
+
+      <div style={{ padding: 20 }}>
+        <Pagination
+          prev
+          next
+          first
+          last
+          ellipsis
+          boundaryLinks
+          maxButtons={5}
+          size="xs"
+          layout={['total', '-', 'limit', '|', 'pager', 'skip']}
+          total={employeeList.length}
+          limitOptions={[5, 10, 15]}
+          limit={limit}
+          activePage={page}
+          onChangePage={setPage}
+          onChangeLimit={handleChangeLimit}
+        />
+      </div>
 
       <EmployeeModal
         show={showModal}
