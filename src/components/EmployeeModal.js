@@ -9,6 +9,10 @@ function EmployeeModal({
   show,
   onHide,
   onChangeInput,
+  handleOnChange,
+  handleOnSubmit,
+  headerKeys,
+  array,
 }) {
   return (
     <>
@@ -24,7 +28,7 @@ function EmployeeModal({
           {values.modalType == "EditEmployee" && (
             <>
               <Form.Group>
-                <Form.Label>Employee ID : {values.employeeId}</Form.Label>                
+                <Form.Label>Employee ID : {values.employeeId}</Form.Label>
               </Form.Group>
               <Form.Group>
                 <Form.Label>Employee Name : </Form.Label>
@@ -60,9 +64,52 @@ function EmployeeModal({
           )}
           {values.modalType == "DeleteEmployee" && (
             <>
-              Are you sure you want to delete the employee with id : 
+              Are you sure you want to delete the employee with id :
               {" " + values.employeeId}
             </>
+          )}
+          {values.modalType == "UploadData" && (
+            <div style={{ textAlign: "center" }}>
+              <h1>REACTJS CSV IMPORT EXAMPLE </h1>
+              <form>
+                <input
+                  type={"file"}
+                  id={"csvFileInput"}
+                  accept={".csv"}
+                  onChange={handleOnChange}
+                />
+
+                <button
+                  onClick={(e) => {
+                    handleOnSubmit(e);
+                  }}
+                >
+                  IMPORT CSV
+                </button>
+              </form>
+
+              <br />
+
+              <table>
+                <thead>
+                  <tr key={"header"}>
+                    {headerKeys.map((key) => (
+                      <th>{key}</th>
+                    ))}
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {array.map((item) => (
+                    <tr key={item.id}>
+                      {Object.values(item).map((val) => (
+                        <td>{val}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </Modal.Body>
         <Modal.Footer>

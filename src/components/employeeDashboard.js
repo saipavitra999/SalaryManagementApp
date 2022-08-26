@@ -114,6 +114,8 @@ function EmployeeDashboard({ ...props }) {
   const [loading, setLoading] = React.useState(false);
   const [limit, setLimit] = React.useState(10);
   const [page, setPage] = React.useState(1);
+  const [file, setFile] = useState();
+  const [array, setArray] = useState([]);
   const [values, setValues] = useState({
     employeeName: null,
     employeeId: null,
@@ -184,6 +186,12 @@ function EmployeeDashboard({ ...props }) {
         modalType: "DeleteEmployee",
       }));
     }
+    if (modalType == "UploadData") {
+      setValues(() => ({
+        ...values,
+        modalType: "UploadData",
+      }));
+    }
   }
 
   const onChangeInput = (e) => {
@@ -212,6 +220,40 @@ function EmployeeDashboard({ ...props }) {
     setEmployeeList(result);
   }
 
+  //csv upload
+  const fileReader = new FileReader();
+
+  const handleOnChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const csvFileToArray = (string) => {
+    const csvHeader = string.slice(0, string.indexOf("\n")).split(",");
+    const csvRows = string.slice(string.indexOf("\n") + 1).split("\n");
+    const array = csvRows.map((i) => {
+      const values = i.split(",");
+      const obj = csvHeader.reduce((object, header, index) => {
+        object[header] = values[index];
+        return object;
+      }, {});
+      return obj;
+    });
+    setArray(array);
+  };
+
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+    if (file) {
+      fileReader.onload = function (event) {
+        const text = event.target.result;
+        csvFileToArray(text);
+      };
+      fileReader.readAsText(file);
+    }
+  };
+
+  const headerKeys = Object.keys(Object.assign({}, ...array));
+
   return (
     <div>
       <h3>Employee Salary Management Dashboard</h3>
@@ -233,6 +275,9 @@ function EmployeeDashboard({ ...props }) {
         onChange={(e) => onChangeInput(e)}
       />
       <button onClick={handleSubmitFilter}>Filter</button>
+      <button onClick={() => modalpopup(null, "UploadData")}>
+        Upload Data
+      </button>
       <Table
         autoHeight
         headerHeight={50}
@@ -308,6 +353,11 @@ function EmployeeDashboard({ ...props }) {
         onChangeInput={onChangeInput}
         handleSubmitEdit={handleSubmitEdit}
         handleSubmitDelete={handleSubmitDelete}
+        handleOnChange={handleOnChange}
+        handleOnSubmit={handleOnSubmit}
+        headerKeys={headerKeys}
+        array={array}
+
       />
     </div>
   );
