@@ -33,78 +33,77 @@ let dummyEmployees = [
     salary: 5000.0,
   },
   {
-    id: "id1",
-    username: "user1",
-    fullname: "Monica Geller",
+    id: "id5",
+    username: "user5",
+    fullname: "James Geller",
     salary: 1000.0,
   },
   {
-    id: "id2",
-    username: "user2",
-    fullname: "Chandler Bing",
+    id: "id6",
+    username: "user6",
+    fullname: "Bobby Brown",
     salary: 1000.5,
   },
   {
-    id: "id3",
-    username: "user3",
-    fullname: "Rachel Green",
+    id: "id7",
+    username: "user7",
+    fullname: "Thomas Green",
     salary: 0.0,
   },
   {
-    id: "id4",
-    username: "user4",
-    fullname: "Ross Geller",
+    id: "id8",
+    username: "user8",
+    fullname: "Jessi Geller",
     salary: 5000.0,
   },
   {
-    id: "id1",
-    username: "user1",
-    fullname: "Monica Geller",
+    id: "id9",
+    username: "user9",
+    fullname: "Amelia Geller",
     salary: 1000.0,
   },
   {
-    id: "id2",
-    username: "user2",
-    fullname: "Chandler Bing",
+    id: "id10",
+    username: "user10",
+    fullname: "Jason Bing",
     salary: 1000.5,
   },
   {
-    id: "id3",
-    username: "user3",
-    fullname: "Rachel Green",
+    id: "id11",
+    username: "user11",
+    fullname: "Edward Green",
     salary: 0.0,
   },
   {
-    id: "id4",
-    username: "user4",
-    fullname: "Ross Geller",
-    salary: 5000.0,
-  },
-  {
-    id: "id1",
-    username: "user1",
-    fullname: "Monica Geller",
-    salary: 1000.0,
-  },
-  {
-    id: "id2",
-    username: "user2",
-    fullname: "Chandler Bing",
-    salary: 1000.5,
-  },
-  {
-    id: "id3",
-    username: "user3",
-    fullname: "Rachel Green",
-    salary: 0.0,
-  },
-  {
-    id: "id4",
-    username: "user4",
-    fullname: "Ross Geller",
+    id: "id12",
+    username: "user12",
+    fullname: "Kelly Kim",
     salary: 5000.0,
   },
 ];
+
+const styles = {
+  leftDisplay: {
+    display: "flex",
+    justifyContent: "left",
+    alignItems: "left",
+    padding: 20,
+  },
+  rightDisplay: {
+    display: "flex",
+    justifyContent: "right",
+    alignItems: "right",
+    padding: 20,
+  },
+  flexRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  containerStyle: {
+    padding: 30,
+  },
+};
 
 function EmployeeDashboard({ ...props }) {
   const [employeeList, setEmployeeList] = useState(dummyEmployees);
@@ -188,6 +187,7 @@ function EmployeeDashboard({ ...props }) {
       }));
     }
     if (modalType == "UploadData") {
+      setError("");
       setFile(null);
       setArray([]);
       setValues(() => ({
@@ -242,7 +242,7 @@ function EmployeeDashboard({ ...props }) {
       const inputFile = e.target.files[0];
       const fileExtension = inputFile?.type.split("/")[1];
       if (!allowedExtensions.includes(fileExtension)) {
-        setError("Please input a csv file");
+        setError("Invalid file format. Please input a csv file");
         return;
       }
       setFile(e.target.files[0]);
@@ -277,31 +277,39 @@ function EmployeeDashboard({ ...props }) {
   const headerKeys = Object.keys(Object.assign({}, ...array));
 
   return (
-    <div>
+    <div style={styles.containerStyle}>
       <h3>Employee Salary Management Dashboard</h3>
-      <h5>Employee List</h5>
-      Enter Mininum Salary :
-      <input
-        id="filterSalaryMin"
-        type="text"
-        name="filterSalaryMin"
-        value={values.filterSalaryMin}
-        onChange={(e) => onChangeInput(e)}
-      />
-      Enter Maximum Salary :
-      <input
-        id="filterSalaryMax"
-        type="text"
-        name="filterSalaryMax"
-        value={values.filterSalaryMax}
-        onChange={(e) => onChangeInput(e)}
-      />
-      <button onClick={handleSubmitFilter}>Filter</button>
-      <button onClick={() => modalpopup(null, "UploadData")}>
-        Upload Data
-      </button>
+      <h5 style={styles.leftDisplay}>Employee List</h5>
+
+      <div style={styles.flexRow}>
+        <span style={styles.leftDisplay}>
+          Enter Mininum Salary :
+          <input
+            id="filterSalaryMin"
+            type="text"
+            name="filterSalaryMin"
+            value={values.filterSalaryMin}
+            onChange={(e) => onChangeInput(e)}
+          />
+          Enter Maximum Salary :
+          <input
+            id="filterSalaryMax"
+            type="text"
+            name="filterSalaryMax"
+            value={values.filterSalaryMax}
+            onChange={(e) => onChangeInput(e)}
+          />
+          <button onClick={handleSubmitFilter}>Filter</button>
+        </span>
+        <span style={styles.rightDisplay}>
+          <button onClick={() => modalpopup(null, "UploadData")}>
+            Upload Data
+          </button>
+        </span>
+      </div>
+
       <Table
-        autoHeight
+        height={480}
         headerHeight={50}
         data={getData()}
         loading={loading}
@@ -309,23 +317,23 @@ function EmployeeDashboard({ ...props }) {
         sortType={sortType}
         onSortColumn={handleSortColumn}
       >
-        <Column width={200} sortable>
+        <Column width={250} sortable>
           <HeaderCell>Id</HeaderCell>
           <Cell dataKey="id" />
         </Column>
-        <Column width={300} sortable>
+        <Column width={250} sortable>
           <HeaderCell>Username</HeaderCell>
           <Cell dataKey="username" />
         </Column>
-        <Column width={300} sortable>
+        <Column width={250} sortable>
           <HeaderCell>Full Name</HeaderCell>
           <Cell dataKey="fullname" />
         </Column>
-        <Column width={300} sortable>
+        <Column width={250} sortable>
           <HeaderCell>Salary</HeaderCell>
           <Cell dataKey="salary" />
         </Column>
-        <Column width={300}>
+        <Column width={250}>
           <HeaderCell>Action</HeaderCell>
           <Cell>
             {(rowData) => (

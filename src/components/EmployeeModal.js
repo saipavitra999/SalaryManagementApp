@@ -22,6 +22,7 @@ function EmployeeModal({
           <Modal.Title>
             {values.modalType == "EditEmployee" && "Edit Employee"}
             {values.modalType == "DeleteEmployee" && "Delete Employee"}
+            {values.modalType == "UploadData" && "Upload Employee Data"}
           </Modal.Title>
         </Modal.Header>
 
@@ -71,7 +72,6 @@ function EmployeeModal({
           )}
           {values.modalType == "UploadData" && (
             <div style={{ textAlign: "center" }}>
-              <h3>Upload Employee Data</h3>
               <form>
                 <input
                   type={"file"}
@@ -84,34 +84,42 @@ function EmployeeModal({
                     handleOnSubmit(e);
                   }}
                 >
-                  IMPORT CSV
+                  Import CSV
                 </button>
               </form>
 
               <br />
 
               {error ? (
-                error
+                <h6>{error}</h6>
               ) : (
-                <table>
-                  <thead>
-                    <tr key={"header"}>
-                      {headerKeys.map((key) => (
-                        <th>{key}</th>
-                      ))}
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {array.map((item) => (
-                      <tr key={item.id}>
-                        {Object.values(item).map((val) => (
-                          <td>{val}</td>
+                <>
+                  {array.length > 0 && (
+                    <div>
+                      <h6>Data has been successfully imported.</h6>
+                      <h6>Preview of data: </h6>
+                    </div>
+                  )}
+                  <table>
+                    <thead>
+                      <tr key={"header"}>
+                        {headerKeys.map((key) => (
+                          <th>{key}</th>
                         ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+
+                    <tbody>
+                      {array.map((item) => (
+                        <tr key={item.id}>
+                          {Object.values(item).map((val) => (
+                            <td>{val}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
               )}
             </div>
           )}
