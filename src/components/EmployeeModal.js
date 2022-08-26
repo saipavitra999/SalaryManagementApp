@@ -97,7 +97,16 @@ function EmployeeModal({
                   {array.length > 0 && (
                     <div>
                       <h6>Data has been successfully imported.</h6>
-                      <h6>Preview of data: </h6>
+                      <h6
+                        style={{
+                          display: "flex",
+                          justifyContent: "left",
+                          alignItems: "left",
+                          padding: 10,
+                        }}
+                      >
+                        Preview of data:{" "}
+                      </h6>
                     </div>
                   )}
                   <table>

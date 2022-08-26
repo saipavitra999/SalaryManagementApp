@@ -3,6 +3,7 @@ import { Table, Pagination } from "rsuite";
 import * as MdIcons from "react-icons/md";
 import { Row, Col } from "react-bootstrap";
 import EmployeeModal from "./EmployeeModal";
+import Axios from "axios";
 
 const { Column, HeaderCell, Cell } = Table;
 
@@ -126,6 +127,16 @@ function EmployeeDashboard({ ...props }) {
     filterSalaryMax: null,
   });
 
+  useEffect(() => {
+    getEmployeeList();
+  }, []);
+
+  //the below function uses mock API
+  const getEmployeeList = async () => {
+    const result = await Axios.get(`http://localhost:3000/employees`);
+    //setEmployeeList(result);
+  };
+
   const handleChangeLimit = (dataKey) => {
     setPage(1);
     setLimit(dataKey);
@@ -204,13 +215,24 @@ function EmployeeDashboard({ ...props }) {
     });
   };
 
-  function handleSubmitEdit() {
-    console.log("Edit User");
-  }
+  //the below function uses mock API.
+  const handleSubmitEdit = async () => {
+    const result = await Axios.put(`http://localhost:3000/employees/:id`, {
+      id: values.employeeId,
+      name: values.employeeName,
+      login: values.employeeLogin,
+      salary: values.employeeSalary,
+    });
+    getEmployeeList(result);
+  };
 
-  function handleSubmitDelete() {
-    console.log("Delete User");
-  }
+  //the below function uses mock API.
+  const handleSubmitDelete = async () => {
+    const result = await Axios.delete(`http://localhost:3000/employees/:id`, {
+      id: values.employeeId,
+    });
+    getEmployeeList(result);
+  };
 
   function handleSubmitFilter() {
     if (values.filterSalaryMin && values.filterSalaryMax) {
@@ -271,7 +293,16 @@ function EmployeeDashboard({ ...props }) {
         csvFileToArray(text);
       };
       fileReader.readAsText(file);
+      uploadData();
     }
+  };
+
+  //the below function uses mock API.
+  const uploadData = async () => {
+    const result = await Axios.post(`http://localhost:3000/employees/upload`, {
+      employeeArray: array,
+    });
+    getEmployeeList(result);
   };
 
   const headerKeys = Object.keys(Object.assign({}, ...array));
